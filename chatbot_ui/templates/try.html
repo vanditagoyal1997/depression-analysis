@@ -1,0 +1,24 @@
+<!doctype html>
+<title>connection</title>
+<script type="text/javascript"
+  src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript">
+  var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<script type="text/javascript">
+  $(function() {
+    var get_audio = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_get_audio', {
+      }, function(data) {
+		$('#caliberating').text(data.caliberating);
+        $('#result').text(data.result);
+      });
+      return false;
+    };
+    $('a#audio').bind('click', get_audio);
+    });
+</script>
+<span id="caliberating">?</span><br />
+<p><a href=# id="audio">speak</a><br />
+you said:
+<span id="result"></span><br />

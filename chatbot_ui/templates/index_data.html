@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript">
+  $(function() {
+    var submit_form = function(e) {
+	  /*if (other==true){
+		$('input[name="intent"]').attr("required",true);
+		if (intentbool=='false'){
+		alert("intent required");
+		}}*/
+      $.getJSON($SCRIPT_ROOT + '/chat/_create_data', {
+        keyword: $('input[name="keyword"]').val(),
+		intent: $('input[name="intent"]').val(),
+		intentbool: $('input[name="intent"]').val()?'true':'false',
+		entity: $('#enabled:checked').is(':checked'),
+		quit: $('#quit:checked').is(':checked'),
+		what: $('#checkwhat:checked').is(':checked'),
+		how: $('#checkhow:checked').is(':checked'),
+		when: $('#checkwhen:checked').is(':checked'),
+		after: $('#checkafter:checked').is(':checked'),
+		before: $('#checkbefore:checked').is(':checked'),
+		howmany: $('#checkhowmany:checked').is(':checked'),
+		whereproc: $('#checkwhereproc:checked').is(':checked'),
+		whereobj: $('#checkwhereobj:checked').is(':checked'),
+		other: $('#checkother:checked').is(':checked')
+      }, function(data) {
+        //$('#result').text(data.result);
+		//alert("done");
+        $('input[name=keyword]').focus().select();
+      });
+      
+	  
+	  return false;
+    };
+    $('a#keyword').bind('click', submit_form);
+    //$('a#what').bind('click', submit_form);
+    $('input[type=text]').bind('keydown', function(e) {
+      if (e.keyCode == 13) {
+        submit_form(e);
+      }
+    });
+    $('input[name=a]').focus();
+  });
+</script>
+<h1>data generator</h1>
+<p>
+  keyword: <input type="text" size="125" name="keyword"><br />
+  intent (optional): <input type="text" size="125" name="intent"><br />
+  <!-- <span id="result">?</span><br /> -->
+  
+  To quit after this: <input type="checkbox" name="quit" id="quit"><br />
+  entity enabled: <input type="checkbox" name="enabled" id="enabled"><br /><br /><br />
+  what: <input type="checkbox" name="checkwhat" id="checkwhat">    what do you mean by ____?<br />
+  how (process): <input type="checkbox" name="checkhow" id="checkhow">     how is ____ done? <br />
+  when: <input type="checkbox" name="checkwhen" id="checkwhen"><br />
+  after: <input type="checkbox" name="checkafter" id="checkafter">      what happens after ____?<br />  
+  before: <input type="checkbox" name="checkbefore" id="checkbefore">   what happens before ____?<br />
+  how many: <input type="checkbox" name="checkhowmany" id="checkhowmany">    how many __________?<br />
+  where (process): <input type="checkbox" name="checkwhereproc" id="checkwhereproc">   where does ____ take place? <br />
+  where (object): <input type="checkbox" name="checkwhereobj" id="checkwhereobj">   where is ____ located? <br />
+  other (intent required): <input type="checkbox" name="checkother" id="checkother">   hi (intent:greet) <br />
+<p><a href=# id="keyword"><button>submit</button></a><br /><br />
+<a href="{{ url_for('bot.index')}}"><button>Back</button></a>
+{% endblock %}
