@@ -1,13 +1,20 @@
+import os
+import sys
+import pylab
+import wave
 from flask import Flask, render_template, request,jsonify
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 from chatterbot.trainers import ChatterBotCorpusTrainer
 from train import train_the_bot
+from con_specto import convert_to_spectogram
+from converter import Converter
+from vid_avi import convert_to_avi
 import sounddevice as sd
 import soundfile as sf
 from scipy.io.wavfile import write
 from queue import Queue 
-#import RuntimeError
+from stat import S_ISREG, ST_CTIME, ST_MODE
 
 
 chatbot = ChatBot("dontstopmenow")
@@ -42,6 +49,20 @@ def get_bot_response():
 		data1=str(chatbot.get_response(text))
 		print(data1)
 		return jsonify(data1)
+
+@app.route("/convert", methods=['POST'])
+def convert():
+	#file_name=
+	#a=[]
+	dir_path='C:/Users/vandi/Documents/final_year_proj/'
+	payload=request.json
+	filename=payload.get("message",{})
+	file_audio=dir_path+'audio/'+filename+'.wav'
+	file_vid=dir_path+'video/'+filename+'.webm'
+	to_return=convert_to_avi(file_vid)
+	print(to_return)
+	to_return=str(convert_to_spectogram(file_audio))
+	return(jsonify(to_return))
 
 @app.route("/record_audio",methods=['POST'])
 def record():
