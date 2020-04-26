@@ -137,6 +137,31 @@ img {
     bottom:0;
 }
 
+#results_prediction {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 50%;
+  padding-left:1000px;
+  float:right
+}
+
+#results_prediction td, #results_prediction th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#results_prediction tr:nth-child(even){background-color: #f2f2f2;}
+
+#results_prediction tr:hover {background-color: #ddd;}
+
+#results_prediction th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
 </style>
 </head>
 
@@ -199,12 +224,21 @@ img {
     		</div>
         </div>
     </div>
-    
+    <table id="results_prediction">
+	<tbody>
+	<th> Type </th>
+	<th> Prediction </th>
+	</tbody>
+	</table>
+
     
 </div>
 <script type="text/javascript" src="{{ url_for('.static', filename='js/cleantest.js') }}" ></script>
-<script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
-<script type="text/javascript" src="{{ url_for('.static', filename='js/recording_trial4.js') }}" ></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/video_recorder_trial10.js') }}" ></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/Recorder_trial4.js') }}"></script> 
+<script type="text/javascript" src="{{ url_for('.static', filename='js/recording_trial21.js') }}" ></script>
+
+
 <script>
 
 $(document).on('click', '.panel-heading span.icon_minim', function (e) {
