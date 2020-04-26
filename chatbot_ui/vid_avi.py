@@ -1,3 +1,4 @@
+#for conversion to avi
 from converter import Converter
 def convert_to_avi(file_video):
 	conv = Converter()

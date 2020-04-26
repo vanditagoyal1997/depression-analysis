@@ -2,14 +2,14 @@ import os
 import sys
 import pylab
 import wave
-from flask import Flask, render_template, request,jsonify
+from flask import Flask, render_template, request,jsonify,json
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 from chatterbot.trainers import ChatterBotCorpusTrainer
-from train import train_the_bot
+from train import train_the_bot #separate function for training the bot
 from con_specto import convert_to_spectogram
 from converter import Converter
-from vid_avi import convert_to_avi
+#from vid_avi import convert_to_avi
 import sounddevice as sd
 import soundfile as sf
 from scipy.io.wavfile import write
@@ -17,13 +17,13 @@ from queue import Queue
 from stat import S_ISREG, ST_CTIME, ST_MODE
 
 
-chatbot = ChatBot("dontstopmenow")
-train_the_bot(chatbot)
+chatbot = ChatBot("da")
+train_the_bot(chatbot) #train the bot
 #trainer = ChatterBotCorpusTrainer(chatbot)
 #trainer.train("chatterbot.corpus.english")
 
-response = chatbot.get_response("Good morning!")
-print(response)
+#response = chatbot.get_response("Good morning!")
+#print(response)
 
 #file=sf.SoundFile("audio_inter.wav",mode='x', samplerate=44100,channels=2, subtype=None)
 
@@ -52,17 +52,22 @@ def get_bot_response():
 
 @app.route("/convert", methods=['POST'])
 def convert():
+	'''conversion to spectrogram + conversion to avi'''
 	#file_name=
 	#a=[]
 	dir_path='C:/Users/vandi/Documents/final_year_proj/'
 	payload=request.json
-	filename=payload.get("message",{})
-	file_audio=dir_path+'audio/'+filename+'.wav'
-	file_vid=dir_path+'video/'+filename+'.webm'
-	to_return=convert_to_avi(file_vid)
-	print(to_return)
-	to_return=str(convert_to_spectogram(file_audio))
-	return(jsonify(to_return))
+	filename=payload.get("message",{}) #sent from recorder_trial11.js
+	file_audio=filename
+	file_vid=filename
+	#to_return=convert_to_avi(file_vid)
+	#print(to_return)
+	to_return=convert_to_spectogram(file_audio)
+	if to_return=='False':
+		print("error in prediction")
+		
+	else:
+		return(json.dumps(to_return))
 
 @app.route("/record_audio",methods=['POST'])
 def record():
