@@ -18,8 +18,6 @@ import time
 
 
 def convert_to_spectogram(file_name):
-	for i in range(0,50000):
-		print("delay")
 	#file_name="audio_inter"
 	path='C:/Users/vandi/Documents/final_year_proj/audio/'
 	a=os.listdir(path)

@@ -9,7 +9,8 @@ from chatterbot.trainers import ChatterBotCorpusTrainer
 from train import train_the_bot #separate function for training the bot
 from con_specto import convert_to_spectogram
 from converter import Converter
-#from vid_avi import convert_to_avi
+from vid_avi import convert_to_avi
+from connect_of import get_gaze_au_data
 import sounddevice as sd
 import soundfile as sf
 from scipy.io.wavfile import write
@@ -62,6 +63,8 @@ def convert():
 	file_vid=filename
 	#to_return=convert_to_avi(file_vid)
 	#print(to_return)
+	to_return=get_gaze_au_data(file_vid)
+	print(to_return)
 	to_return=convert_to_spectogram(file_audio)
 	if to_return=='False':
 		print("error in prediction")
