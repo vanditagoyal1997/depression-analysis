@@ -2,11 +2,19 @@ import os
 import sys
 import pylab
 import wave
-from flask import Flask, render_template, request,jsonify,json
+from datetime import date
+from datetime import timedelta
+from flask import Flask, render_template, request,jsonify,json,session,flash, redirect, url_for
+from flask_mysqldb import MySQL
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from passlib.hash import sha256_crypt
+from functools import wraps
+import hashlib
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
 from chatterbot.trainers import ChatterBotCorpusTrainer
 from train import train_the_bot #separate function for training the bot
+from convert_to_audio import convert_aud
 from con_specto import convert_to_spectogram
 from converter import Converter
 from vid_avi import convert_to_avi
@@ -16,8 +24,15 @@ import soundfile as sf
 from scipy.io.wavfile import write
 from queue import Queue 
 from stat import S_ISREG, ST_CTIME, ST_MODE
+import time
+import atexit
+from apscheduler.schedulers.background import BackgroundScheduler
+import mysql.connector
 
 
+
+md5_audio=0
+md5_video=0
 chatbot = ChatBot("da")
 train_the_bot(chatbot) #train the bot
 #trainer = ChatterBotCorpusTrainer(chatbot)
@@ -30,9 +45,257 @@ train_the_bot(chatbot) #train the bot
 
 app = Flask(__name__)
 
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'password'
+app.config['MYSQL_DB'] = 'dep_ana'
+app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+# init MYSQL
+mysql = MySQL(app)
+def convert():
+	'''conversion to spectrogram + get gaze and au results'''
+	#file_name=
+	#a=[]
+	import mysql.connector
+	print("hi from convert")
+	cnx = mysql.connector.connect(user='root',password='password',host='127.0.0.1', database='dep_ana')
+	cur = cnx.cursor()
+	dir_path='C:/Users/vandi/Documents/final_year_proj/'
+	#cur = mysql.connection.cursor()
+
+	# Get user by username
+	cur.execute("SELECT * FROM dep_ana_dates WHERE executed='N'")
+	print(cur)
+	data = cur.fetchall()
+	if data!=None:
+		#data = cur.fetchall()
+		for data_tpl in data:
+			print(data_tpl)
+			user=data_tpl[1]
+			date_user=data_tpl[0]
+			md5_audio_val = data_tpl[4]
+			md5_video_val = data_tpl[5]
+			file_audio=data_tpl[2]
+			file_video=data_tpl[3]
+			
+			f = open(dir_path+file_audio+'.wav', 'rb')
+			check_data=f.read()
+			f.close()
+			md5_audio_cand=hashlib.md5(check_data).hexdigest()
+			f = open(dir_path+file_video+'.avi', 'rb')
+			check_data=f.read()
+			f.close()
+			file_video=file_video.split("/")[1]
+			file_audio=file_audio.split("/")[1]
+			md5_video_cand=hashlib.md5(check_data).hexdigest()
+			if md5_audio_val==md5_audio_cand:
+				print("cleared one hurdle")
+				if md5_video_val==md5_video_cand:
+					print("cleared second hurdle")
+					to_return=get_gaze_au_data(file_video)
+					print(to_return)
+					to_return=convert_to_spectogram(file_audio)
+					if to_return=='False':
+						print("error in prediction")
+					else:
+					#insert in db
+						audio_pred = to_return.item()
+						cur.execute("INSERT INTO dep_ana_pred(date, reg_id, audio, gaze, au) VALUES(%s, %s, %s, %s, %s)", (date_user, user, audio_pred , 0,0))
+						cur.execute("UPDATE dep_ana_dates SET executed='D' where date=%s and reg_id=%s",(date_user,user))
+						#cnx.commit()
+					#cnx.close()
+						print("done-conversion-1")
+				else:
+					print("error-corruption of video file")
+					cnx.close()
+					break
+					#return "not done"
+			else:
+				print("error - corruption of audio file")
+				cnx.close()
+				break
+				#return "not done"
+		cnx.commit()
+		cnx.close()
+		print("done conversion completely")
+	else:
+		print("error --")
+		
+print("before scheduler")
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(convert,'interval',minutes=15)
+sched.start()
+print("after scheduler")
+print("omg it worked!")
+
+def enter_in_db(filename,d2):
+	user=filename.split("-")[0]
+	print(user)
+	cur = mysql.connection.cursor()
+	# Execute query
+	cur.execute("INSERT INTO dep_ana_dates(date, reg_id, link_audio, link_video,md5_audio,md5_video,executed) VALUES(%s, %s, %s, %s, %s,%s,%s)", (d2, user, "audio/"+filename,"video/"+filename,md5_audio,md5_video,"N"))
+	# Commit to DB
+	mysql.connection.commit()
+	# Close connection
+	cur.close()
+
 @app.route("/")
+@app.route("/home")
 def home():
-    return render_template("index.html")
+	print("hi from home")
+	return render_template("login.html")
+@app.route("/login", methods=["POST"])
+def login():
+	if request.method == 'POST':
+		# Get Form Fields
+		username = request.form['regid']
+		password_candidate = request.form['pwd']
+		if username =="" :
+			error="enter username"
+			return render_template('login.html', error=error)
+		elif password_candidate=="":
+			error="enter password"
+			return render_template('login.html', error=error)
+		else:
+			# Create cursor
+			cur = mysql.connection.cursor()
+
+			# Get user by username
+			result = cur.execute("SELECT * FROM reg_log WHERE reg_id = %s", [username])
+			print(result)
+
+			if result > 0:
+				# Get stored hash
+				data = cur.fetchone()
+				password = data['pwd']
+
+				# Compare Passwords
+				if sha256_crypt.verify(password_candidate, password):
+					# Passed
+					session['logged_in'] = True
+					session['username'] = username
+					if username=="Admin":
+						return redirect(url_for('admin_index'))
+					else:
+						#flash('You are now logged in', 'success')
+						return redirect(url_for('user_index'))
+				else:
+					error = 'Invalid login'
+					print(error)
+					return render_template('login.html', error=error)
+				# Close connection
+				cur.close()
+			else:
+				error = 'Username not found'
+				print(error)
+				return render_template('login.html', error=error)
+
+@app.route("/register", methods=["POST","GET"])
+def register():
+	if request.method=='GET':
+		return render_template("register.html")
+	if request.method == 'POST':
+		# Get Form Fields
+		username = request.form['regid']
+		password_candidate = request.form['pwd']
+		retype_password = request.form['pwd_2']
+		if username =="" :
+			error="enter username"
+			return render_template('register.html', error=error)
+		elif password_candidate=="":
+			error="enter password"
+			return render_template('register.html', error=error)
+		elif retype_password=="":
+			error="retype password"
+			return render_template('register.html', error=error)
+		elif retype_password!= password_candidate:
+			error="Retype password and password do not match"
+			return render_template('register.html', error=error)
+		else:
+			cur = mysql.connection.cursor()
+			# Get user by username
+			result = cur.execute("SELECT * FROM reg_log WHERE reg_id = %s", [username])
+			print(result)
+			if result==0:
+				if len(password_candidate)>12:
+					error="password length should be less than or equal to 11"
+					cur.close()
+					return render_template('register.html', error=error)
+				elif password_candidate.isalnum()==False or username.isalnum()==False:
+					error="only alphanumeric characters allowed"
+					cur.close()
+					return render_template('register.html', error=error)
+				else:
+					pwd=sha256_crypt.hash(password_candidate)
+					cur.execute("INSERT INTO reg_log(reg_id, pwd) VALUES(%s, %s)", (username,pwd))
+					# Commit to DB
+					mysql.connection.commit()
+					# Close connection
+					cur.close()
+					return redirect(url_for("home"))
+			else:
+				error="username taken"
+				cur.close()
+				return render_template('register.html', error=error)
+			
+
+# Check if user logged in
+def is_logged_in(f):
+	@wraps(f)
+	def wrap(*args, **kwargs):
+		if 'logged_in' in session:
+			return f(*args, **kwargs)
+		else:
+			flash('Unauthorized, Please login', 'danger')
+			return render_template("login.html")
+	return wrap
+
+# Logout
+@app.route('/logout')
+def logout():
+	session.clear()
+	print("hi from log out")
+	#flash('You are now logged out', 'success')
+	return redirect("home")
+
+@app.route('/admin_index')
+def admin_index():
+	today = date.today()
+	date2=today-timedelta(days=3)
+	d1 = today.strftime("%Y-%m-%d")
+	d2 = date2.strftime("%Y-%m-%d")
+	cur = mysql.connection.cursor()
+	result = cur.execute("SELECT * FROM dep_ana_pred WHERE date between %s and %s", [d2,d1])
+	if result>0:
+		data = cur.fetchall()
+		print(data)
+		cur.close()
+		return render_template('index_admin.html', output_data = data)
+	else:
+		cur.close()
+		print("error --")
+ 
+	
+
+@app.route('/user_index')
+def user_index():
+	print("in user_index")
+	return render_template("index.html")
+	
+@app.route('/admin_user_spec',methods=["POST"])
+def admin_user_spec():
+	if request.method == 'POST':
+		username = request.form['regid']
+		cur = mysql.connection.cursor()
+		result = cur.execute("SELECT * FROM dep_ana_pred WHERE reg_id=%s", [username])
+		if result>0:
+			data = cur.fetchall()
+			print(data)
+			cur.close()
+			return render_template('index_admin.html', output_data = data)
+		else:
+			cur.close()
+			print("error --")
 
 @app.route("/chat/receive",methods=['GET','POST'])
 def get_bot_response():
@@ -50,27 +313,75 @@ def get_bot_response():
 		data1=str(chatbot.get_response(text))
 		print(data1)
 		return jsonify(data1)
-
-@app.route("/convert", methods=['POST'])
-def convert():
-	'''conversion to spectrogram + conversion to avi'''
-	#file_name=
-	#a=[]
-	dir_path='C:/Users/vandi/Documents/final_year_proj/'
-	payload=request.json
-	filename=payload.get("message",{}) #sent from recorder_trial11.js
-	file_audio=filename
-	file_vid=filename
-	#to_return=convert_to_avi(file_vid)
-	#print(to_return)
-	to_return=get_gaze_au_data(file_vid)
-	print(to_return)
-	to_return=convert_to_spectogram(file_audio)
-	if to_return=='False':
-		print("error in prediction")
 		
-	else:
-		return(json.dumps(to_return))
+@app.route("/create_audio", methods=['POST'])
+def create_audio_file():
+	global md5_audio
+	today = date.today()
+	d1 = today.strftime("%d_%m_%Y")
+	user=str(session['username'])
+	filename=user+'-'+d1
+	dir_path='C:/Users/vandi/Documents/final_year_proj/audio/'
+	file_string=request.data
+	#print(file_string)
+	#filename=request.form['file_name']
+	#print(filename)
+	#file_string=payload.get("file",{})
+	#filename=payload.get("filename",{}) #sent from recorder_trial11.js
+	file_audio=filename
+	f = open(dir_path+file_audio+'.wav', 'wb')
+	f.write(file_string)
+	f.close()
+	md5_audio=hashlib.md5(file_string).hexdigest()
+	print(md5_audio)
+	return "Binary message written!"
+
+@app.route("/create_video", methods=['POST'])
+def create_video_file():
+	global md5_video
+	today = date.today()
+	d1 = today.strftime("%d_%m_%Y")
+	d2=today.strftime('%Y-%m-%d')
+	user=str(session['username'])
+	filename=user+'-'+d1
+	dir_path='C:/Users/vandi/Documents/final_year_proj/video/'
+	file_string=request.data
+	#print(file_string)
+	#filename=request.form['file_name']
+	#print(filename)
+	#file_string=payload.get("file",{})
+	#filename=payload.get("filename",{}) #sent from recorder_trial11.js
+	file_video=filename
+	f = open(dir_path+file_video+'.webm', 'wb')
+	f.write(file_string)
+	f.close()
+	to_return=convert_to_avi(file_video)
+	print(to_return)
+	f = open(dir_path+file_video+'.avi', 'rb')
+	data_vid=f.read()
+	md5_video=hashlib.md5(data_vid).hexdigest()
+	print(md5_video)
+	enter_in_db(filename,d2)
+	#w=convert(user, d2)
+	session.clear()
+	return jsonify("logout now")
+
+
+
+		
+		
+	
+	
+
+	#dir_path_video='C:/Users/vandi/Documents/final_year_proj/video/'
+	#to_return=get_gaze_au_data(file_vid)
+	#print(to_return)
+	# to_return=convert_to_spectogram(file_audio)
+	# if to_return=='False':
+		# print("error in prediction")
+		
+	# else:
+		# return(json.dumps(to_return))
 
 @app.route("/record_audio",methods=['POST'])
 def record():
@@ -120,4 +431,5 @@ def record():
 
 
 if __name__ == "__main__":
-    app.run()
+	app.secret_key='secret123'
+	app.run()

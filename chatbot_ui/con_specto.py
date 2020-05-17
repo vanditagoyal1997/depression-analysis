@@ -20,8 +20,8 @@ import time
 def convert_to_spectogram(file_name):
 	#file_name="audio_inter"
 	path='C:/Users/vandi/Documents/final_year_proj/audio/'
-	a=os.listdir(path)
-	print(a)
+	#a=os.listdir(path)
+	#print(a)
 	w=wave.open(path+file_name+'.wav','rb')
 	frames = w.readframes(-1)
 	sound_info = pylab.frombuffer(frames, 'Int16')
@@ -40,10 +40,7 @@ def convert_to_spectogram(file_name):
 	file_name+='_spec.png'
 	prediction=prediction_using_cnn(file_name)
 	if prediction is not None:
-		if prediction[0][0]>prediction[0][1]:
-			return {'type':'audio','pred':'not depressed'}
-		else:
-			return {'type':'audio','pred':'depressed'}
+		return prediction[0][1]
 	else:
 		return False
 
