@@ -2,7 +2,7 @@
 #from converter import Converter
 import os
 def convert_to_avi(file_video):
-	path_orig="C:\\Users\\vandi\\Documents\\final_year_proj\\audio\\"
+	path_orig="C:\\Users\\vandi\\Documents\\final_year_proj\\video\\"
 	path_final="C:\\Users\\vandi\\Documents\\final_year_proj\\video\\"
 	string_arg='ffmpeg -i '+'"'+path_orig+file_video+".webm"+'"'+' '+'"'+path_final+file_video+".avi"+'"'
 	os.system('cmd /c '+'"'+string_arg+'"') 

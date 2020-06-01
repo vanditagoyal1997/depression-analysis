@@ -1,39 +1,342 @@
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
+from chatterbot.comparisons import sentiment_comparison
+
+
 #from chatterbot.trainers import ChatterBotCorpusTrainer
 
 def train_the_bot(chatbot_name):
 	trainer = ListTrainer(chatbot_name)
+	trainer.train([
+	"Hi",
+    "Hi! How are you?"
+	])
+	trainer.train([
+	"I am tired",
+    "I feel very sad to hear that. Why do you feel so?"
+	])
+	trainer.train([
+	"I am feeling lonely",
+    "I feel very sad to hear that. Why do you feel so?"
+	])
 	trainer.train([
 	"Hello",
     "Hi! How are you?",
     "I am good.",
     "That is good to hear.",
     "Thank you",
-    "You are welcome."
+    "You are welcome.",
+	"Bye","Good Bye!"
 	])
 	trainer.train([
 	"Hello",
     "Hi! How are you?",
-    "I am not feeling fine.",
-    "I feel very sad to hear that. Why do you feel so?",
-    "I failed my exam today.",
-    "It is alright. You will pass the next time!",
-	"Thank you for saying that",
-	"You are welcome"
+    "I am doing great.",
+    "That is good to hear. Do you like to read?",
+    "Yes. I love to read",
+	"Which is your favourite book?",
+	"To kill a mockingbird",
+	"Is it by Harper Lee?",
+	"Yes. It is a great book.",
+	"That is a great choice.",
+	"Thank you",
+    "You are welcome.",
+	"Bye","Good Bye!"
 	])
+	trainer.train(["Hi",
+   	"Hello! How are you?",
+	"I am very tired and frustrated.",
+    "Why? What happened?",
+    "The lockdown happened. I have to do alot of household chores with very little help.",
+    "Is there no one who can help?",
+    "They try. But all are busy.",
+    "Are you having trouble sleeping as well?",
+    "Yes. I can barely sleep nowadays.",
+    "That may be because you can't unwind.",
+    "That may be true.",
+    "Why don't you listen to some calming music?",
+    "I can do that but I have trouble sitting still. I am filled with anxiety.",
+    "Are you worried about something?",
+    "Just about the future. I am about to start a new job.","You will do great! Don't worry","Thanks. I needed to hear that.","You are welcome. My work here is done. Bye!"])
 	trainer.train([
-	"Hello",
-    "Hi! How are you?",
-    "I am fine.",
-    "That is good to hear.",
-    "Thank you",
-	"So what is your favorite colour?",
-	"blue",
-	"where are you from originally?",
-	"Noida",
-	"Why did you move to a college in jaipur then?",
-	"Because i wanted to be close to home yet far enough from it"
-	])
-	
+    "Hello",
+	"Hi! How are you?",
+	"I am not feeling fine.",
+	"Why do you feel so?",
+	"I can't get anything right.",
+	"Don't worry about it.Things will get better",
+    "They never seem to",
+    "You need to believe in yourself more",
+	"Maybe i do. Thank you for saying that!",
+	"Alright my work here is done! Goodbye!"
+    ])
+	trainer.train([
+    "Hello",
+	"Hi! How are you?",
+	"I am fine.",
+	"What are your hobbies?",
+	"I enjoy singing.",
+	"What kind of songs do you sing?",
+    "Mostly classical",
+    "That's great"
+    ])
+	trainer.train([
+    "Hello",
+	"Hi! How are you doing today?",
+	"I am great.",
+	"That's wonderful to hear.Tell me about the last movie you saw",
+	"I saw a movie called Her. It's a sci-fi romance",
+	"Is the one about the AI powered system?",
+    "Yes.Her name is Samantha",
+    "Oh.Is she like Siri?",
+    "Sort of.Only better.","That is very interesting! On that note i have got to go! Bye!"
+    ])
+	trainer.train(["Hello",
+	"Hi! How are you?", "Just a little tired",
+    "Have you been working a lot?",
+    "Yeah.I have so much to do",
+    "Are you taking out some time to relax?",
+    "Not really","What do you like to do to unwind",
+    "I enjoy cooking","What's your favourite cuisine?"
+    "I like Italian and Japanese",
+    "Everyone loves pasta! What's your favourite pasta dish?",
+    "Ravioli with pesto and parmesan",
+    "How long does it take to cook?",
+    "Not too long.About an hour",
+    "It sounds delicious"
+    ])
+	trainer.train(["Hello",
+	"Hi! How are you doing?", "Not so well actually",
+    "Would you like to tell me about it?",
+    "It's nothing much.I'm just having a lot of fights with my friends",
+    "Why is that?",
+    "They don't understand me at all",
+    "Can you give me an example?"
+    "They never understand when I tell them that I'm busy",
+    "Have you tried telling them about how you feel?",
+    "I have, but they don't really listen",
+    "Maybe it's the way you're saying it? Try being open instead of angry",
+    "That might work",
+    "I hope you try it"])
+	trainer.train(["Hi",
+	"Hello! How are you?", "I'm good",
+    "How's the weather like where you live?",
+    "Oh it's always raining here",
+    "Is it raining today?",
+    "Yes it has",
+    "Do you get stuck in traffic a lot because of the rain"
+    "Oh yes. Sometimes I'm an hour late to work",
+    "Are your managers understanding about that?",
+    "They are but sometimes they do get mad at me",
+    "How long does it take you to get to work when it's not raining",
+    "Not long. About 20 minutes",
+    "Do you live close to work?",
+    "Yes about 7 kilometers away"])
+	trainer.train(["Hi",
+	"Hello! How are you?","Just a little down",
+    "Do you want to talk about it?",
+    "Not really",
+    "Do you want to talk about something else? Like a book or a movie or a TV show?"
+    "Sure",
+    "Do you like thriller movies?",
+    "Yes. I watch them all the time",
+    "Which one is your favourite?",
+    "Probably Ocean's Eleven",
+    "Who is your favourite actor?",
+    "Brad Pitt,I guess","That's great.Do you watch action movies too",
+    "Yes.I love them"])
+	trainer.train(["Hi",
+   	"Hello! How are you?",
+    "I'm great", "Any plans for the weekend",
+    "Not really.We might go to the beach",
+    "Oh that's great.Is it sunny where you live?",
+    "Yes.It's always sunny here",
+    "Do you enjoy swimming in the sea?",
+    "Not really.I'm scared of drowning",
+    "So a barbeque then?",
+    "Oh yes.And some volleyball",
+    "Do you play any sports?",
+    "Yes.I play badminton twice a week and basketball too",
+    "Who's your favourite sportsperson",
+    "Definitely Kobe Bryant",
+    "Were you upset when he passed away?",
+    "Yes.I can't play basketball without thinking about him",
+    "I agree.He was a legend"])
+	trainer.train(["Hey",
+    "Hello! How are you?",
+    "Just exhausted",
+    "Why?",
+    "I have a ton of schoolwork",
+    "That sounds tiring.What are you studying?",
+    "I'm studying maths and physics",
+    "What are your favourite subjects",
+    "I really like history and biology",
+    "Sounds great. Any cool facts off the top of your head?",
+    "A human’s ears and nose never stop growing",
+    "Wow! I did not know that. Will I end up looking like Pinocchio?",
+    "Maybe","That is a scary thought! on that note, i will take your leave. Bye!"])
+	trainer.train(["Hi",
+   	"Hello! How are you?","Not great",
+    "Why is that?","I feel really homesick",
+    "Do you live away from your family?",
+    "Yes. I had to move for work",
+    "Who do you miss the most?",
+    "Probably my mum",
+    "Do you talk to her on the phone often",
+    "Yeah I try to. But I'm so busy with work",
+    "I'm sure she misses you too. Do you visit them?",
+    "No I haven't been able to go back since I came here 7 months ago",
+    "Why don't you videocall them? I think they'll like that",
+    "That's a good idea","Alright my work here is done! Bye!"])
+	trainer.train(["Hi",
+   	"Hello! How are you?","I have a terrible headache",
+    "That's awful. Are you getting enough sleep?",
+    "Not really. I lie awake for hours",
+    "Have you tried drinking some herbal tea?",
+    "Yes I have. But it doesn't work",
+    "What about listening to some calming music and meditating for a few minutes?",
+    "I can do that. But everytime I sit still, I feel so anxious",
+    "Is there something that's worrying you?",
+    "Not really. I just worry about the future",
+    "Do you have something important coming up?",
+    "Yes.I'm writing an exam to get a promotion",
+    "I'm sure you'll do well. But you need to get enough rest",
+    "That's true","Alright my work here is done! Bye!"])
+	trainer.train(["Hi",
+   	"Hello! How are you?","I'm good.How about you?",
+    "I'm good too. Anything new?",
+    "Not really.Just the same old stuff",
+    "Do you like reading?",
+    "Yes.I'm love reading",
+    "That's wonderful.Which one's your favourite?",
+    "I love the Harry Potter series",
+    "Who's your favourite character?",
+    "I like Hermoine a lot",
+    "Is it because she's so smart?",
+    "Yeah. And she's really brave too",
+    "I love her too","I have gotta go! Bye","Bye!"])
+	trainer.train(["Hey",
+    "Hello! How are you?","I'm doing okay",
+    "Just okay?","Yeah.I'm pretty stressed out",
+    "Do you want to talk about it?",
+    "I have an exam coming up and I'm really scared",
+    "When is your exam?",
+    "It's a week later",
+    "Have you prepared enough?",
+    "I think so.But I can't be sure",
+    "Hard work pays off.Don't stress yourself",
+    "That actually feels good to hear","You are welcome! My work here is done! Good bye!"])
+	trainer.train(["Hi",
+   	"Hello! How are you?",
+    "I dont know.",
+    "Is everything okay?",
+    "Yeah.I'm just really lonely",
+    "What about your friends and family?",
+    "I've fallen out with everyone",
+    "Can you think of why that happened?",
+    "Not really.I tried to give my best",
+    "You need to stop thinking about the past then.Why don't you call one of your friends right now?",
+    "I don't know if they'll still talk to me",
+    "At least you will have the satisfaction that you gave your best",
+    "That's true","Alright my work here is done! bye!"])
+	trainer.train(["Hi",
+   	"Hello! How are you?","I'm great",
+    "That's awesome to hear.What's making your day great?",
+    "I just ordered pizza",
+    "I love pizza too.What are your favourite toppings?",
+    "I love olives and mushrooms",
+    "Do you like thin crust or pan crust",
+    "I like my pizza really thin and crispy",
+    "So do I!Do you like oregano on that?",
+    "Not really. I like chill flakes though",
+    "That's cool.I love spicy food",
+    "Yeah me too.","Haha that's great. I gotta go! bye","Bye"])
+	trainer.train(["Hi",
+   	"Hello! How are you?", "Not so well actually",
+    "Is everything okay at work?","That's what I wanted to talk about",
+    "Okay.Tell me about it","The hours are too long.I'm really tired",
+    "What do you do in your job?","I work as a doctor.",
+    "That's a tough job.How many hours are you working?",
+    "Sometimes it's 90 hours a week",
+    "That's a lot.Do you get time for anything else",
+    "Not really.",
+    "What about weekends?",
+    "I end up working on Saturdays and sometimes Sundays too",
+    "Do you enjoy your work",
+    "I do.But it's tiring me out ",
+    "Perhaps it's time for you to slow down?",
+    "I don't think I can do that",
+    "Your job is really important but not as much as your health",
+    "I don't think people will understand if I tell them that I'm a doctor and I feel depressed",
+    "You don't need to think about what other people believe.Getting help right now can turn your life around",
+    "I'll think about it",
+    "Once again,I'd advise you to immediately seek help. Are you eating well?",
+    "Not really. I don't feel hungry anymore",
+    "Are you on any kind of special diet?",
+    "No",
+    "How many hours do you sleep each night?",
+    "I lie awake a lot.Though I'm tired,I can't sleep",
+    "Have you tried talking to a mental health professional about this?",
+    "No.I want to but I don't get the time",
+    "I can help you book an online session in which you can speak to the counsellor.Would you like that?",
+    "Yes.Okay.I think I'm ready","will get right to it!","Thank you","You are welcome!"])
+	trainer.train(["Hi",
+   	"Hello! How are you?","I'm good",
+    "That's nice to hear.Any plans for the weekend?",
+    "I'm actually flying to Spain for a vacation",
+    "That's awesome.What places do you plan to visit?",
+    "Well, I'm going to Barcelona and Valencia",
+    "That sounds great.How's the weather there this time of the year?",
+    "It's really sunny and nice",
+    "Do you travel a lot?",
+    "Yes.I love travelling",
+    "How many countries have you visited so far?",
+    "I've been to 13 so far",
+    "That's amazing.Which has been your favourite?",
+    "I think it was Australia",
+    "Do you prefer mountains or beaches?",
+    "Definitely beaches",
+    "I hope you have a great vacation",
+    "Thank you","You are welcome. My work here is done! Goodbye!"])
+	trainer.train(["Hi",
+   	"Hello! How are you?","I'm well",
+    "That's good to know. How's everything at work?",
+    "It's good.I think I'm up for a promotion.",
+    "Wow.Congratulations! Are you excited?",
+    "Yes I am! I've been waiting for this for a long time",
+    "How do you plan to celebrate?",
+    "I'm not sure yet, but I might go to concert with some friends",
+    "Do you enjoy music?",
+    "Yes.",
+    "What kind of music do you listen to?",
+    "I really like indie pop",
+    "Who's your favourite singer?",
+    "Billie Eilish",
+    "Her hair is really different too",
+    "Yeah.I want hair just like hers",
+	"That would be cool. Maybe you should get it done!","Maybe i should! thanks for the suggestion","Alright! my work here is done. Bye!"
+    ])
+	trainer.train(["Hi",
+   	"Hello! How are you?","I'm fine",
+    "Anything new or exciting coming up?",
+    "Not really.Same old boring",
+    "What do you do with your free time?",
+    "I like gaming",
+    "What type of device do you game on?",
+    "Sometimes I use my laptop and sometimes my Playstation",
+    "What kind of games do you play?",
+    "There has to be some kind of action",
+    "Which games do you like the most?",
+    "Assassin's Creed and GTA",
+    "They sound cool.Maybe I should start gaming too.What do you say?",
+    "Yeah that would be nice","Alright my work is done! Bye"])
 
+	
+# chatbot = ChatBot("da",storage_adapter='chatterbot.storage.SQLStorageAdapter',filters=["chatterbot.filters.RepetitiveResponseFilter"],read_only="True")
+# train_the_bot(chatbot)
+
+# a=str(input(""))
+# while a!="q":
+	# res=str(chatbot.get_response(a))
+	# print(res)
+	# a=str(input(""))

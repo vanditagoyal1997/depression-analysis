@@ -40,9 +40,10 @@ def convert_to_spectogram(file_name):
 	file_name+='_spec.png'
 	prediction=prediction_using_cnn(file_name)
 	if prediction is not None:
-		return prediction[0][1]
+		prediction[0]=np.array(prediction[0]).tolist()
+		return prediction[0]
 	else:
-		return False
+		return [False]
 
 def prediction_using_cnn(file_name):
 	arr=[]
@@ -59,7 +60,8 @@ def prediction_using_cnn(file_name):
 		prediction=loaded_model.predict(np.array(arr))
 		return(prediction)
 
-#prediction=prediction_using_cnn("346_AUDIO_spec.png")
-#print(prediction)
+# prediction=prediction_using_cnn("2016ucp1004-03_05_2020_spec.png")
+# print(prediction)
+# print(type(prediction[0]))
 
 #print(convert_to_spectogram("xyz"))
