@@ -19,7 +19,7 @@ import time
 
 def convert_to_spectogram(file_name):
 	#file_name="audio_inter"
-	path='C:/Users/vandi/Documents/final_year_proj/audio/'
+	path='/audio/'
 	#a=os.listdir(path)
 	#print(a)
 	w=wave.open(path+file_name+'.wav','rb')
@@ -32,11 +32,11 @@ def convert_to_spectogram(file_name):
 	pylab.title('spectrogram of the audio file')
 	pylab.specgram(sound_info, Fs=frame_rate)
 #     pylab.savefig('spectrogram.png')
-	pylab.savefig('C:/Users/vandi/Documents/final_year_proj/spectogram/'+file_name+'_spec.png')
+	pylab.savefig('/spectogram/'+file_name+'_spec.png')
 	dim=(512,512)
-	img=Image.open('C:/Users/vandi/Documents/final_year_proj/spectogram/'+file_name+'_spec.png')
+	img=Image.open('/spectogram/'+file_name+'_spec.png')
 	new_img = img.resize(dim, Image.ANTIALIAS)
-	new_img.save('C:/Users/vandi/Documents/final_year_proj/spectogram_test/'+file_name+'_spec.png')
+	new_img.save('/spectogram_test/'+file_name+'_spec.png')
 	file_name+='_spec.png'
 	prediction=prediction_using_cnn(file_name)
 	if prediction is not None:
@@ -47,14 +47,14 @@ def convert_to_spectogram(file_name):
 
 def prediction_using_cnn(file_name):
 	arr=[]
-	json_file = open('C:/Users/vandi/Documents/final_year_proj/chatbot_ui/audio_model/audio.json', 'r')
+	json_file = open('/audio_model/audio.json', 'r')
 	loaded_model_json = json_file.read()
 	json_file.close()
 	with CustomObjectScope({'GlorotUniform': glorot_uniform()}):
 		loaded_model = model_from_json(loaded_model_json)
 		# load weights into new model
-		loaded_model.load_weights("C:/Users/vandi/Documents/final_year_proj/chatbot_ui/audio_model/audio.h5")
-		t=load_img('C:/Users/vandi/Documents/final_year_proj/spectogram_test/'+file_name)
+		loaded_model.load_weights("/audio_model/audio.h5")
+		t=load_img('/spectogram_test/'+file_name)
 		x=img_to_array(t)
 		arr.append(x)
 		prediction=loaded_model.predict(np.array(arr))
