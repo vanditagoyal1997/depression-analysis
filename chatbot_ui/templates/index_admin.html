@@ -42,16 +42,12 @@
     <tbody>
 	<th>date</th>
         <th>registration id</th>
-        <th>audio</th>
-        <th>gaze</th>
-		<th>action units</th>
+        <th>prediction</th>
         {% for row in output_data %} 
             <tr>
                 <td>{{row['date']}}</td>
                 <td>{{row['reg_id']}}</td>
-                <td>{{row['audio']}}</td>
-                <td>{{row['gaze']}}</td>
-				<td>{{row['au']}}</td>
+                <td>{{row['prediction']}}</td>
             </tr>
         {% endfor %}     
     </tbody>
