@@ -60,7 +60,7 @@ def convert():
 	print("hi from convert")
 	cnx = mysql.connector.connect(user='root',password='password',host='127.0.0.1', database='dep_ana')
 	cur = cnx.cursor()
-	dir_path='C:/Users/vandi/Documents/final_year_proj/'
+	dir_path=''
 
 	# Get unprocessed rows
 	cur.execute("SELECT * FROM dep_ana_dates WHERE executed='N'")
@@ -370,7 +370,7 @@ def create_audio_file():
 	d1 = today.strftime("%d_%m_%Y")
 	user=str(session['username'])
 	filename=user+'-'+d1
-	dir_path='C:/Users/vandi/Documents/final_year_proj/audio/'
+	dir_path='/audio/'
 	file_string=request.data
 	#print(file_string)
 	#filename=request.form['file_name']
@@ -394,7 +394,7 @@ def create_video_file():
 	d2=today.strftime('%Y-%m-%d')
 	user=str(session['username'])
 	filename=user+'-'+d1
-	dir_path='C:/Users/vandi/Documents/final_year_proj/video/'
+	dir_path='/video/'
 	file_string=request.data
 	#print(file_string)
 	#filename=request.form['file_name']
