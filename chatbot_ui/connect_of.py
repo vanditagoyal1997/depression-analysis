@@ -14,14 +14,14 @@ from keras.initializers import glorot_uniform
 from random import randint
 pd.options.mode.chained_assignment = None 
 val=randint(315,317) 
-path_data1="C:\\Users\\vandi\\Documents\\final_year_proj\\chatbot_ui\\processed\\"+str(val)+"_CLNF_gaze.txt"
-path_data2="C:\\Users\\vandi\\Documents\\final_year_proj\\chatbot_ui\\processed\\319_CLNF_gaze.txt"
+#path_data1="C:\\Users\\vandi\\Documents\\final_year_proj\\chatbot_ui\\processed\\"+str(val)+"_CLNF_gaze.txt"
+#path_data2="C:\\Users\\vandi\\Documents\\final_year_proj\\chatbot_ui\\processed\\319_CLNF_gaze.txt"
 def au_data_pred(file_video):
 	flag=[]
 	table=[]
-	path_data="C:\\Users\\vandi\\Documents\\final_year_proj\\chatbot_ui\\processed\\"+file_video+".csv"
-	au_path="C:\\Users\\vandi\\Documents\\final_year_proj\\au_data\\"+file_video+"_CLNF_AU.txt"
-	gaze_path="C:\\Users\\vandi\\Documents\\final_year_proj\\gaze_data\\"+file_video+"_CLNF_gaze.txt"
+	path_data="\\processed\\"+file_video+".csv"
+	au_path="\\au_data\\"+file_video+"_CLNF_AU.txt"
+	gaze_path="\\gaze_data\\"+file_video+"_CLNF_gaze.txt"
 	data = pd.read_csv(path_data)
 	final_au_df = data[[" success"," AU01_r"," AU02_r"," AU04_r"," AU05_r"," AU06_r"," AU09_r"," AU10_r"," AU12_r"," AU14_r"," AU15_r"," AU17_r"," AU20_r"," AU25_r"," AU26_r"]]
 	final_au_df.to_csv(au_path ,sep=',', index = False)
@@ -41,13 +41,13 @@ def au_data_pred(file_video):
 	table.append(flag)
 	np.array(table)
 	padded_au=pad_sequences(table,padding='post')
-	json_file = open('C:/Users/vandi/Documents/final_year_proj/chatbot_ui/au_model/au.json', 'r')
+	json_file = open('/au_model/au.json', 'r')
 	loaded_model_json = json_file.read()
 	json_file.close()
 	with CustomObjectScope({'GlorotUniform': glorot_uniform()}):
 		loaded_model = tf.keras.models.model_from_json(loaded_model_json)
 		# load weights into new model
-		loaded_model.load_weights("C:/Users/vandi/Documents/final_year_proj/chatbot_ui/au_model/au.h5")
+		loaded_model.load_weights("/au_model/au.h5")
 		prediction=loaded_model.predict(padded_au)
 		return prediction[0]
 	#final_gaze_df=data[['frame',' timestamp',' confidence',' success',' gaze_0_x',' gaze_0_y',' gaze_0_z',' gaze_1_x',' gaze_1_y',' gaze_1_z']]
@@ -57,8 +57,8 @@ def au_data_pred(file_video):
 def gaze_data_pred(file_video):
 	flag=[]
 	table=[]
-	path_data="C:\\Users\\vandi\\Documents\\final_year_proj\\chatbot_ui\\processed\\"+file_video+".csv"
-	gaze_path="C:\\Users\\vandi\\Documents\\final_year_proj\\gaze_data\\"+file_video+"_CLNF_gaze.txt"
+	path_data="\\processed\\"+file_video+".csv"
+	gaze_path="\\gaze_data\\"+file_video+"_CLNF_gaze.txt"
 	data = pd.read_csv(path_data2)
 	final_gaze_df=data[[' success',' x_0',' y_0',' z_0',' x_1',' y_1',' z_1',' x_h0',' y_h0',' z_h0',' x_h1',' y_h1',' z_h1']]
 	final_gaze_df.to_csv(gaze_path ,sep=',', index = False)
@@ -78,20 +78,20 @@ def gaze_data_pred(file_video):
 	table.append(flag)
 	np.array(table)
 	padded_gaze=pad_sequences(table,padding='post')
-	json_file = open('C:/Users/vandi/Documents/final_year_proj/chatbot_ui/gaze_model/gaze.json', 'r')
+	json_file = open('/gaze_model/gaze.json', 'r')
 	loaded_model_json = json_file.read()
 	json_file.close()
 	with CustomObjectScope({'GlorotUniform': glorot_uniform()}):
 		loaded_model = tf.keras.models.model_from_json(loaded_model_json)
 		# load weights into new model
-		loaded_model.load_weights("C:/Users/vandi/Documents/final_year_proj/chatbot_ui/gaze_model/gaze.h5")
+		loaded_model.load_weights("/gaze_model/gaze.h5")
 		prediction=loaded_model.predict(padded_gaze)
 		return prediction[0]
 	
 def get_gaze_au_data(file_video):
 	print("hi from gaze_au")
-	path="C:\\Users\\vandi\\Documents\\final_year_proj\\OpenFace_2.2.0_win_x64\\OpenFace_2.2.0_win_x64\\FeatureExtraction.exe"
-	file_path=r'C:\\Users\\vandi\\Documents\\final_year_proj\\video\\'
+	path="\\OpenFace_2.2.0_win_x64\\OpenFace_2.2.0_win_x64\\FeatureExtraction.exe"
+	file_path=r'\\video\\'
 	#convert_to_avi(file_video)
 	#path2=os.getcwd()
 	args=path+' -f '+'"'+file_path+file_video+'.avi'
@@ -110,10 +110,3 @@ def get_gaze_au_data(file_video):
 			return [False]
 	else:
 		return [False]
-	
-#print(temp.stdout.read())
-# a=get_gaze_au_data("2016ucp1004-03_05_2020")
-# print(type(a))
-# print(a)
-# print(type(a[0]))
-# print(type(a[1]))
