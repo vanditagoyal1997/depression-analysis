@@ -14,8 +14,16 @@ Action Units
 
 ## Application created
 An end to end application was created using Flask to create a server and HTML, CSS and JS to create the user interface. To minimise human intervention in the process, a chatbot called DINA was created using ChatterBot to interact with the user and collect data (audio and video file)
-Used OpenFace toolkit created by Tadas Baltrušaitis in collaboration with CMU MultiComp Lab led by Prof. Louis-Philippe Morency. to analyse and extract Action Units data and Gaze data from video.
+
+Used OpenFace toolkit created by Tadas Baltrušaitis in collaboration with CMU MultiComp Lab led by Prof. Louis-Philippe Morency to analyse and extract Action Units data and Gaze data from video.
 https://github.com/TadasBaltrusaitis/OpenFace
+
+## Future Plan
+1. Fix inputs to models in application
+2. Diversify training dataset
+3. Make models more robust and finding a better method to combine results
+4. Using previous records of a user for prediction over a period of time and exploring relevant weightages for the same 
+5. Implementation of better security features to ensure user privacy 
 
 
 
