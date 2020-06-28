@@ -1,0 +1,449 @@
+<html>
+<head>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+
+body{
+    height:400px;
+    position: fixed;
+    bottom: 0;
+}
+.col-md-2, .col-md-10{
+    padding:0;
+}
+
+.panel{
+    margin-bottom: 0px;
+}
+.panel-default>.panel-heading {
+    color: #f5f5f5;
+    background-color: #31708fde;
+    border-color: #ddd;
+}
+button{
+	background-color:#dff0d8;
+	color:black;
+}
+select{
+	background-color:#dff0d8;
+	color:black;
+}
+.chat-window{
+    position:fixed;
+	width:30%;
+	bottom:0;
+	left:30%;
+   
+}
+.chat-window > div > .panel{
+    border-radius: 5px 5px 0 0;
+}
+.icon_minim{
+	color:white;
+    padding:2px 10px;
+}
+.icon_close{
+	color:white;
+}
+.msg_container_base{
+  background: white;
+  margin: 0;
+  padding: 0 10px 10px;
+  max-height:300px;
+  overflow-x:hidden;
+}
+.top-bar {
+  background-color:#424356d6;
+  color: white;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.msg_receive{
+	background-color:#eee;
+    padding-left:0;
+    margin-left:0;
+}
+.msg_sent{
+	background-color:#286090;
+	color:white;
+    padding-bottom:20px !important;
+    margin-right:0;
+}
+.messages {
+  padding: 10px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  max-width:100%;
+}
+.messages > p {
+    font-size: 13px;
+    margin: 0 0 0.2rem 0;
+  }
+.messages > time {
+    font-size: 11px;
+    color: #ccc;
+}
+.msg_container {
+    padding: 10px;
+    overflow: hidden;
+    display: flex;
+}
+img {
+    display: block;
+    width: 100%;
+}
+.avatar {
+    position: relative;
+}
+.base_receive > .avatar:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border: 5px solid #FFF;
+    border-left-color: rgba(0, 0, 0, 0);
+    border-bottom-color: rgba(0, 0, 0, 0);
+}
+
+.base_sent {
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.base_sent > .avatar:after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border: 5px solid white;
+    border-right-color: transparent;
+    border-top-color: transparent;
+    box-shadow: 1px 1px 2px rgba(black, 0.2); // not quite perfect but close
+}
+
+.msg_sent > time{
+    float: right;
+}
+
+
+
+.msg_container_base::-webkit-scrollbar-track
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    background-color: #F5F5F5;
+}
+
+.msg_container_base::-webkit-scrollbar
+{
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+.msg_container_base::-webkit-scrollbar-thumb
+{
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+}
+
+.btn-group.dropup{
+    position:fixed;
+    left:0px;
+    bottom:0;
+}
+
+
+
+</style>
+</head>
+
+<body>
+<div class="recording_link">
+<p><strong></strong></p>
+    <ol id="recordingsList"></ol>
+</div>
+<div class="container">
+    <div class="row chat-window col-xs-5 col-md-3" id="chat_window_1" style="margin-left:10px;">
+        <div class="col-xs-12 col-md-12">
+        	<div class="panel panel-default">
+                <div class="panel-heading top-bar">
+                    <div class="col-md-8 col-xs-8">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-comment"></span> Chat - DA &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp 
+						<!-- <select id="voices" onchange="jsfunction(this.value)">
+							<option value="M">Male Voice</option>
+							<option value="F">Female Voice</option>
+						</select> -->
+						<select id="voices"></select>
+						<button id="audio_start" value="start" name="audio_start">start</button>
+						<button id="audio_stop" value="stop" name="audio_stop">stop</button>
+						</h3>
+                    </div>
+                    <div class="col-md-4 col-xs-4" style="text-align: right;">
+                        <a href="#"><span id="minim_chat_window" class="glyphicon glyphicon-minus icon_minim"></span></a>
+                        <a href="#"><span class="glyphicon glyphicon-remove icon_close" data-id="chat_window_1"></span></a>
+                    </div>
+                </div>
+                <div id="msg-insert" class="panel-body msg_container_base">
+                     <div class="row msg_container base_receive">
+                        <div class="col-md-2 col-xs-2 avatar">
+                            <img src="https://ptetutorials.com/images/user-profile.png" class=" img-responsive ">
+                        </div>
+                        <div class="col-md-10 col-xs-10">
+                            <div class="messages msg_receive">
+                                <p>Hello! I am Dash.</p>
+                            </div>
+                        </div>
+                    </div>
+                   
+                 </div>
+                <div class="panel-footer">
+                    <div class="input-group mic">
+						<div class="col-md-10 col-sm-10" style="padding: 1px;">
+							<input id="btn-input" type="text" class="form-control input-sm chat_input" placeholder="Write your message here..." />
+						</div>
+						<div class="col-md-2 col-sm-2 ready" style="padding: 1px;">
+							<a id="audio" href="#"><img src="{{ url_for('.static', filename='img/mic.png') }}" style="width: 70%;"/></a>
+						</div>
+						<div class="listening"><span class="listening-1">.</span><span class="listening-2">.</span><span class="listening-3">.</span></div>
+						</div>
+                        <!-- 
+                        <span class="input-group-btn">
+                        <a id="demo2" href="#"><img src="img/mic.png" style="width: 90%;"/></a></div>
+                        </span> -->
+                    </div>
+                </div>
+    		</div>
+        </div>
+    </div>
+	<!--<button id="ad_get_results" value="res" name="ad_get_results"> get results for today </button>-->
+    
+
+    
+</div>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/cleantest.js') }}" ></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/video_recorder_trial14.js') }}" ></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/Recorder_trial4.js') }}"></script> 
+<script type="text/javascript" src="{{ url_for('.static', filename='js/recording_trial36.js') }}" ></script>
+
+
+<script>
+
+$(document).on('click', '.panel-heading span.icon_minim', function (e) {
+    var $this = $(this);
+    if (!$this.hasClass('panel-collapsed')) {
+        $this.parents('.panel').find('.panel-body').slideUp();
+        $this.addClass('panel-collapsed');
+        $this.removeClass('glyphicon-minus').addClass('glyphicon-plus');
+    } else {
+        $this.parents('.panel').find('.panel-body').slideDown();
+        $this.removeClass('panel-collapsed');
+        $this.removeClass('glyphicon-plus').addClass('glyphicon-minus');
+    }
+});
+$(document).on('focus', '.panel-footer input.chat_input', function (e) {
+    var $this = $(this);
+    if ($('#minim_chat_window').hasClass('panel-collapsed')) {
+        $this.parents('.panel').find('.panel-body').slideDown();
+        $('#minim_chat_window').removeClass('panel-collapsed');
+        $('#minim_chat_window').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+    }
+});
+$(document).on('click', '#new_chat', function (e) {
+    var size = $( ".chat-window:last-child" ).css("margin-left");
+     size_total = parseInt(size) + 400;
+    alert(size_total);
+    var clone = $( "#chat_window_1" ).clone().appendTo( ".container" );
+    clone.css("margin-left", size_total);
+});
+$(document).on('click', '.icon_close', function (e) {
+    //$(this).parent().parent().parent().parent().remove();
+    $( "#chat_window_1" ).remove();
+});
+
+/*$("#audio_start,#audio_stop").click(function(e) {
+    e.preventDefault();
+	//var but_data={id: $(this).val()}
+    $.ajax({
+        type: "POST",
+        url: "/record_audio",
+        data: JSON.stringify ({'id': $(this).val()}),
+		contentType: "application/json",
+		dataType: 'json',
+        success: function(result) {
+            alert('ok');
+        },
+        error: function(result) {
+            alert('error');
+        }
+    });
+}); */
+
+
+var input = $('#btn-input');
+var container=$('#msg-insert');
+			input.keypress(function(event) {
+				var $this = $(this);
+
+				if(event.keyCode == 13){
+					var msg = $this.val();
+					
+					$this.val('');
+					$('#msg-insert').append('<div class="row msg_container base_sent">'+
+                        '<div class="col-md-10 col-xs-10 ">'+
+                            '<div class="messages msg_sent">'+
+                               ' <p style="display: inline-block;">'+msg+'</p>'+
+                           ' </div>'+
+                       ' </div>'+
+                      '  <div class="col-md-2 col-xs-2 avatar">'+
+                        '    <img src="https://ptetutorials.com/images/user-profile.png" class=" img-responsive ">'+
+                     '   </div>'+
+                  '  </div>');
+				  container.find('.msg_container:last').focus();
+				  ajaxcall(msg);
+					}
+			});
+			
+
+
+</script>
+
+
+<script>
+
+    function ajaxcall(message) {
+		var postData = {
+						  "sender" : "123",
+						  "message" : message
+						};
+          $.ajax({
+			type: 'POST',
+			url: '/chat/receive',
+			data: JSON.stringify (postData),
+			contentType: "application/json",
+			dataType: 'json',
+			success: function(data) { 
+			speech(data);
+			$('#msg-insert').append('<div class="row msg_container base_receive">'+
+                        '<div class="col-md-2 col-xs-2 avatar">'+
+                          '  <img src="https://ptetutorials.com/images/user-profile.png" class=" img-responsive ">'+
+                       ' </div>'+
+                        '<div class="col-md-10 col-xs-10">'+
+                        '    <div class="messages msg_receive">'+
+                         '       <p>'+data+'</p>'+
+                         
+                         '   </div>'+
+                        '</div>'+
+                    '</div>');
+			
+			},
+			error: function (jqXHR, exception) {
+				var msg = '';
+				if (jqXHR.status === 0) {
+					msg = 'Not connect.\n Verify Network.';
+				} else if (jqXHR.status == 404) {
+					msg = 'Requested page not found. [404]';
+				} else if (jqXHR.status == 500) {
+					msg = 'Internal Server Error [500].';
+				} else if (exception === 'parsererror') {
+					msg = 'Requested JSON parse failed.';
+				} else if (exception === 'timeout') {
+					msg = 'Time out error.';
+				} else if (exception === 'abort') {
+					msg = 'Ajax request aborted.';
+				} else {
+					msg = 'Uncaught Error.\n' + jqXHR.responseText;
+				}
+				alert(msg);
+			}
+			
+		});
+    // stop link reloading the page
+		event.preventDefault();
+    }
+	
+	function record_start() {
+	}
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.1/js/materialize.min.js"></script>
+<script>
+            /*function jsfunction(value){
+                //alert("hi "+value);
+				
+            }*/
+			
+			
+			var voices='';
+			//var $voicelist='';
+			var derangedVoice='';
+			$(function(){
+			  if ('speechSynthesis' in window) {
+				speechSynthesis.onvoiceschanged = function() {
+				  $voicelist = $('#voices');
+				  voices = window.speechSynthesis.getVoices();
+				  derangedVoice = voices.filter(function (voice) {
+						return voice.name == 'Google US English';
+					})[0];
+				  if($voicelist.find('option').length == 0) {
+					speechSynthesis.getVoices().forEach(function(voice, index) {
+					  var $option = $('<option>')
+					  .val(index)
+					  .html(voice.name + (voice.default ? ' (default)' :''));
+
+					  $voicelist.append($option);
+					});
+
+					//$voicelist.material_select();
+				  }
+				}
+
+				/*$('#speak').click(function(){
+				  var text = $('#message').val();
+				  var msg = new SpeechSynthesisUtterance();
+				  var voices = window.speechSynthesis.getVoices();
+				  msg.voice = voices[$('#voices').val()];
+				  msg.rate = $('#rate').val() / 10;
+				  msg.pitch = $('#pitch').val();
+				  msg.text = text;
+
+				  msg.onend = function(e) {
+					console.log('Finished in ' + event.elapsedTime + ' seconds.');
+				  };
+
+				  speechSynthesis.speak(msg);
+				})*/
+			  } /*else {
+				$('#modal1').openModal();
+			  }*/
+			});
+			
+			
+			function speech(message){
+				  var text = message;
+				  var msg = new SpeechSynthesisUtterance();
+				  //var voices = window.speechSynthesis.getVoices();
+				  msg.lang = 'en-US';
+				  //alert($('#voice').val())
+				  msg.voice = voices[0] ;
+				  msg.rate = 1;
+				  msg.pitch = 1;
+				  msg.text = text;
+				  msg.onend = function(e) {
+					console.log('Finished in ' + event.elapsedTime + ' seconds.');
+				  };
+
+				  speechSynthesis.speak(msg);
+			
+			}
+        </script>
+</body>
+
+
+
+</html>

@@ -1,0 +1,72 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<style>
+#results_prediction {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 50%;
+  padding-top:1000px;
+  padding-left:500px;
+  float:center;
+}
+
+#results_prediction td, #results_prediction th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#results_prediction tr:nth-child(even){background-color: #f2f2f2;}
+
+#results_prediction tr:hover {background-color: #ddd;}
+
+#results_prediction th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+</style>
+</head>
+<body>
+<form action="/admin_user_spec" method="post">
+      <input name="regid" type="text" placeholder="username">
+	  <button id="form_submit" type="submit">get records</button>
+</form>
+<form action="/logout" method="get">
+<button id="logout" name="logout" type="submit"> Log Out </button>
+</form>
+<table id="results_prediction">
+    <tbody>
+	<th>date</th>
+        <th>registration id</th>
+        <th>prediction</th>
+        {% for row in output_data %} 
+            <tr>
+                <td>{{row['date']}}</td>
+                <td>{{row['reg_id']}}</td>
+                <td>{{row['prediction']}}</td>
+            </tr>
+        {% endfor %}     
+    </tbody>
+</table>
+<!--<script>
+$(document).ready(function(){
+  $("#logout").click(function(){
+	$.ajax({
+			type: 'GET',
+			url: '/logout',
+			success: function(data) {
+				console.log("logged out");
+			},
+			error: function(result) {
+				console.log('error from logout');
+			}
+		});
+	});
+});
+</script>-->
+</body>
+</html>

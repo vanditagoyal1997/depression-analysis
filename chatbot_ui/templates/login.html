@@ -1,0 +1,67 @@
+<html>
+<head>
+<style>
+.alert-danger{
+	border: 2px red;
+	color:red;
+	font-weight:bold;
+}
+</style>
+<link rel="stylesheet" href="{{ url_for('.static', filename='css/login_style.css') }}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{{ url_for('.static', filename='js/login3.js') }}" ></script>
+<!--<script type="text/javascript" src="login.js" ></script>-->
+</head>
+<body>
+<div id="error_message">
+{% if error %}
+  <div class="alert alert-danger">{{error}}</div>
+{% endif %}
+</div>
+
+
+<div class="login-page">
+	<div class="form">
+    <form class="register-form" action="/register" method="post">
+      <input type="text" placeholder="username"/>
+      <input type="password" placeholder="password"/>
+      <button type="submit">create</button>
+      <p class="message">Already registered? <a id="show_login" href="{{ url_for('home') }}"">Sign In</a></p>
+    </form>
+    <form class="login-form" action="/login" method="post">
+      <input name="regid" type="text" placeholder="username">
+      <input name="pwd" type="password" placeholder="password">
+      <button id="form_submit" type="submit">login</button>
+      <p class="message">Not registered? <a id ="show_regiser" href="{{ url_for('register') }}">Create an account</a></p>
+    </form>
+  </div>
+</div>
+<!--<script>
+$(document).ready(function(){
+  $("#form_submit").click(function(){
+ 
+	var form_submission={
+	'regid': $('input[name=regid]').val(),
+	'password':$('input[name=pwd]').val()
+	}
+	$.ajax({
+			type: 'POST',
+			url: '/login',
+			data: JSON.stringify (form_submission),
+			contentType: "application/json",
+			dataType: 'json',
+			success: function(data) {
+				console.log("form submitted");
+			},
+			error: function(result) {
+				console.log('error from convert');
+			}
+		});
+	});
+});
+
+</script>-->
+</body>
+</html>
+
