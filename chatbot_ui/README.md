@@ -14,4 +14,4 @@
 11.	The counsellor can log in and view the results through the User Interface.
 
 # Flow diagram for application
-![Flow diagram] (/images/ui_multi.jpg)
+![Flow diagram] (/chatbot_ui/images/ui_multi.JPG)
