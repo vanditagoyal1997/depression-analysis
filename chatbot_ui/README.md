@@ -12,3 +12,6 @@
 9.	These data files are then sent to the model for prediction.
 10.	The predictions are stored in the database
 11.	The counsellor can log in and view the results through the User Interface.
+
+# Flow diagram for application
+![Flow diagram] 
