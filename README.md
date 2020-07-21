@@ -7,10 +7,6 @@ The database that we used for the training is a section of a bigger corpus, the 
 
 https://dcapswoz.ict.usc.edu/
 
-## Proposed Method
-Audio
-Gaze
-Action Units
 
 ## Application created
 An end to end application was created using Flask to create a server and HTML, CSS and JS to create the user interface. To minimise human intervention in the process, a chatbot called DINA was created using ChatterBot to interact with the user and collect data (audio and video file)
